@@ -1,0 +1,22 @@
+<?php
+return array(
+   'writer'=>array(
+          'host'=>'localhost',
+          'dbname'=>'test',
+          'port'=>3306,
+          'user'=>'root',
+          'password'=>'',
+          'charset'=>'utf8'
+         ),
+   'reader'=>array(
+          "0"=>array(
+            'host'=>'localhost',
+            'dbname'=>'test',
+            'port'=>3306,
+            'user'=>'root',
+            'password'=>'',
+            'charset'=>'utf8'
+			),
+       ),
+);
+?>

@@ -7,9 +7,9 @@ use Model\Custodian;
  * UTF-8
  */
 abstract class BaseAbstract{
-	
+
 	public $config;
-	
+
 	public function setConfig($config){
 		$this->config = $config;
 	}
@@ -23,7 +23,9 @@ abstract class BaseAbstract{
 		if (empty ( $order_id )) {
 			throw new \Exception ( 'order_id 不能为空' );
 		}
-		$data = "";
+		$data = array("amount"=>1);
+		return $data;
+
 		switch ($type){
 			//托管支付
 			case 1:
@@ -31,9 +33,9 @@ abstract class BaseAbstract{
 				break;
 		}
 		return $data;
-		
+
 	}
-	
+
 	public function getCustodian($trans_no){
 		if(empty($trans_no)){
 			return false;
@@ -42,10 +44,8 @@ abstract class BaseAbstract{
 		$record = $order->where(['field'=>'trans_no','op'=>'=','value'=>$trans_no])
 			  			->where(['field'=>"status",'op'=>'=','value'=>0])
 			  			->getOne();
-		
+
 		return $record;
 	}
-	
+
 }
-	
-	

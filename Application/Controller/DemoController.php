@@ -1,17 +1,44 @@
 <?php
+namespace Application\Controller;
+use Application\Model\User;
+use Library\Controller\Controller;
+use Pay\Factory;
 //一般人都是mvc的吧 不解释了
- class DemoController{
-	public function getPayUrl(){
+ class DemoController extends Controller{
+
+
+	public function actionIndex(){
+		echo 1;die;
+	}
+
+  public function actionGetpayurl1(){
 		$order_id = $_GET['order_id'];
-		$type = 1;//代表你的支付是什么类型的 
+		$type = 1;//代表你的支付是什么类型的
 		//order_id 就是你的订单的订单号 通过订单号确定支付信息
-		//type 代表你的支付类型 
+		//type 代表你的支付类型
+
 		$url = Factory::getAgent('alipay')->getPayUrl($order_id,$type);
+		echo $url;die;
 		if(!empty($url)){
 			header("location: $url");die;//跳转到支付链接
 		}
 		echo "请求参数错误";
 	}
+
+  public function actionGetpayurl2(){
+		$order_id = $_GET['order_id'];
+		$type = 1;//代表你的支付是什么类型的
+		//order_id 就是你的订单的订单号 通过订单号确定支付信息
+		//type 代表你的支付类型
+
+		$url = Factory::getAgent('wechat')->getPayUrl($order_id);
+		echo $url;die;
+		if(!empty($url)){
+			header("location: $url");die;//跳转到支付链接
+		}
+		echo "请求参数错误";
+	}
+
 
 	//支付回调接口
 	public function alipay(){
@@ -26,14 +53,13 @@
 				//todo
 				//跳转到你想跳转的页面header();
 			}
-			
-			
+
+
 		}
-		
+
 		echo "签名校验失败";die;
-		
+
 	}
  }
+
 ?>
-	
-	

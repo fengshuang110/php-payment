@@ -1,27 +1,27 @@
-<?php 
+<?php
 namespace Pay\Adapter;
 use Pay\Base\BaseAbstract;
-use Common\Third\Wechat;
-use Pay\Wechat\Helper;
+use Pay\Weixin\Config;
+use Pay\Weixin\Sdk;
 
 class Wechat extends BaseAbstract{
     protected $wechat;
     protected $unifiedOrder;
     protected $jsApi;
     public  $order = null;
-    
-    
+
+
     public function __construct($options=array()){
-        
-        $this->wechat = Wechat::getInstance();
-        $this->unifiedOrder = Helper::getAdapter("UnifiedOrder_pub");
-        $this->jsApi = Helper::getAdapter("JsApi_pub");
-		$this->orderQuery = Helper::getAdapter("OrderQuery_pub");
+
+        $this->unifiedOrder = Sdk::getAdapter("UnifiedOrder_pub");
+        $this->jsApi = Sdk::getAdapter("JsApi_pub");
+        $this->nativeLink = Sdk::getAdapter("NativeLink_pub");
+		    $this->orderQuery = Sdk::getAdapter("OrderQuery_pub");
     }
-    
+
     //设置参数
-    public function setPayRequestData($order_id,$openid){
-        
+    public function setPayRequestData($order_id,$trade_type="J",$openid){
+
         $this->order = $this->getOrder($order_id);
         $member = $this->getMember($this->order['buyer_id']);
         $this->unifiedOrder->setParameter("openid","$openid");//商品描述
@@ -52,7 +52,20 @@ class Wechat extends BaseAbstract{
         $jsApiParameters = $this->jsApi->getParameters();
         return $jsApiParameters;
     }
-    
+
+    public function getPayUrl($product_id){
+      $this->unifiedOrder->setParameter("body","店铺订单");//商品描述
+      $this->unifiedOrder->setParameter("out_trade_no",$product_id);//商户订单号
+      $this->unifiedOrder->setParameter("total_fee",1);//总金额
+      $this->unifiedOrder->setParameter("product_id",$product_id);//总金额
+//      $this->unifiedOrder->setParameter("total_fee",1);//总金额
+      $this->unifiedOrder->setParameter("notify_url",Config::NATIVE_NOTIFY_URL);//通知地址
+      $this->unifiedOrder->setParameter("trade_type","NATIVE");//交易类型\
+      $url = $this->unifiedOrder->getPayUrl();
+  
+      echo 	'<img alt="模式一扫码支付" src="http://paysdk.weixin.qq.com/example/qrcode.php?data='.urlencode($url).'" style="width:150px;height:150px;"/>';die;
+    }
+
     public function checkPaysign($obj){
 
         return  $this->jsApi->getSign($obj);
@@ -64,8 +77,8 @@ class Wechat extends BaseAbstract{
 		return $this->orderQuery->orderQuery();
 
 	}
-    
-    
+
+
 }
 
 
